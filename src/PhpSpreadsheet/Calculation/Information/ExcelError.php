@@ -104,7 +104,7 @@ class ExcelError
      * Returns the error value #N/A
      *        #N/A is the error value that means "no value is available."
      *
-     * @return string #N/A!
+     * @return string #N/A
      */
     public static function NA(): string
     {

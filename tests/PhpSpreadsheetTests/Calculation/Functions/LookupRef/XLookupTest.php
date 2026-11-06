@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpOffice\PhpSpreadsheetTests\Calculation\Functions\LookupRef;
 
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\NamedRange;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -54,7 +55,14 @@ class XLookupTest extends AllSetupTeardown
             'simple lookup' => [3.0, '=XLOOKUP("Cherry", A1:E1, A2:E2)'],
             'simple lookup cell' => [3.0, '=XLOOKUP(Z98, A1:E1, A2:E2)'],
             'not found with string' => ['Not found', '=XLOOKUP("Fig", A1:E1, A2:E2, "Not found")'],
-            'not found with default string' => ['#N/A!', '=XLOOKUP("Fig", A1:E1, A2:E2)'],
+            'not found with default error' => [ExcelError::NA(), '=XLOOKUP("Fig", A1:E1, A2:E2)'],
+            'not found with omitted argument' => [ExcelError::NA(), '=XLOOKUP("Fig", A1:E1, A2:E2,,0)'],
+            'binary search not found with default error' => [ExcelError::NA(), '=XLOOKUP(490, H15:N15, H16:N16,,0,2)'],
+            'default error is seen by ISNA' => [true, '=ISNA(XLOOKUP("Fig", A1:E1, A2:E2))'],
+            'default error is seen by ISERROR' => [true, '=ISERROR(XLOOKUP("Fig", A1:E1, A2:E2))'],
+            'default error is caught by IFNA' => ['caught', '=IFNA(XLOOKUP("Fig", A1:E1, A2:E2), "caught")'],
+            'default error is caught by IFERROR' => ['caught', '=IFERROR(XLOOKUP("Fig", A1:E1, A2:E2), "caught")'],
+            'default error propagates' => [ExcelError::NA(), '=XLOOKUP("Fig", A1:E1, A2:E2)+1'],
             'Wildcard match (case-insensitive)' => ['E05', '=XLOOKUP("EL*", A1:E1, A3:E3, "Not found", 2)'],
             'Wildcard with ?' => [80, '=XLOOKUP("?ate", A1:E1, A4:E4, "Not found", 2)'],
             'Wildcard with ~' => [250, '=XLOOKUP("Ba~~ana", A1:E1, A4:E4, "Not found", 2)'],
@@ -65,7 +73,7 @@ class XLookupTest extends AllSetupTeardown
             'Invalid search mode' => ['#VALUE!', '=XLOOKUP("Apple", A1:E1, A2:E2, "Not found", 0, 5)'],
             'Lookup array supplied as scalar' => [1.2, '=XLOOKUP("Apple", "Apple", A2)'],
             'Return array supplied as scalar' => [2.5, '=XLOOKUP("Cherry", Z98, 2.5)'],
-            'Arrays supplied as scalar non-match' => ['#N/A!', '=XLOOKUP("Apple", "Banana", A2)'],
+            'Arrays supplied as scalar non-match' => [ExcelError::NA(), '=XLOOKUP("Apple", "Banana", A2)'],
             'Reverse search with defined names' => [95, '=XLOOKUP("Alice", names1, values1, "Not found", 0, -1)'],
             'Next smaller approximate match' => [0.2, '=XLOOKUP(75000, H10:L10, H11:L11, "Not found", -1)'],
             'Next larger approximate match' => ['L', '=XLOOKUP(8.5, A14:E14, A15:E15, "Not found", 1)'],
