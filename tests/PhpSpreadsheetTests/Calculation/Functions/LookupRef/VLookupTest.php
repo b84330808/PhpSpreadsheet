@@ -42,6 +42,18 @@ class VLookupTest extends AllSetupTeardown
         self::assertEquals($expectedResult, $result);
     }
 
+    public function testEmptyStringMatchesFormulaReturningEmptyString(): void
+    {
+        $sheet = $this->getSheet();
+        $sheet->fromArray([
+            ['a', 1],
+            [null, 2],
+            ['=""', 3],
+        ]);
+        $sheet->getCell('Z99')->setValue('=VLOOKUP("",A1:B3,2,FALSE)');
+        self::assertSame(3, $sheet->getCell('Z99')->getCalculatedValue());
+    }
+
     public static function providerVLOOKUP(): array
     {
         return require 'tests/data/Calculation/LookupRef/VLOOKUP.php';

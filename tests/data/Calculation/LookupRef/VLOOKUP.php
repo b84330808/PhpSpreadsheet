@@ -166,6 +166,28 @@ return [
         3,
         null,
     ],
+    'exact match, empty lookup cell does not match empty cell' => [
+        '#N/A',
+        null,
+        [
+            ['a', 1],
+            ['b', 2],
+            [null, 3],
+        ],
+        2,
+        false,
+    ],
+    'exact match, empty string does not match empty cell' => [
+        '#N/A',
+        '',
+        [
+            ['a', 1],
+            ['b', 2],
+            [null, 3],
+        ],
+        2,
+        false,
+    ],
     'issue2934' => [
         'Red',
         102,
